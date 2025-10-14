@@ -10,18 +10,11 @@
           <p class="text-xs font-medium text-[var(--text-2)]">Manage uploads, approvals, and brand-ready assets.</p>
         </div>
         <nav class="flex items-center gap-3 text-sm font-medium text-[var(--text-2)]">
-          <a class="rounded-md px-2 py-1 transition-colors hover:text-primary" href="/portal/client/upload">
-            Client: Upload
-          </a>
-          <a class="rounded-md px-2 py-1 transition-colors hover:text-primary" href="/portal/client/library">
-            Client: Library
-          </a>
-          <a class="rounded-md px-2 py-1 transition-colors hover:text-primary" href="/portal/admin/review">
-            Admin: Review
-          </a>
-          <a class="rounded-md px-2 py-1 transition-colors hover:text-primary" href="/portal/settings/integrations">
-            Settings
-          </a>
+          <template v-for="link in navLinks" :key="link.href">
+            <a class="rounded-md px-2 py-1 transition-colors hover:text-primary" :href="link.href">
+              {{ link.label }}
+            </a>
+          </template>
           <Button class="ml-1" size="sm" variant="secondary" @click="handleLogout">
             Logout
           </Button>
@@ -36,23 +29,45 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, watch } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { Toaster } from 'vue-sonner';
 import Button from './ui/Button.vue';
-import { logout } from './services/auth';
+import { isAdmin, logout } from './services/auth';
 
 const router = useRouter();
 const route = useRoute();
 const isLoggedIn = ref(false);
+const isAdminUser = ref(false);
+const navLinks = computed(() => {
+  if (!isLoggedIn.value) {
+    return [];
+  }
+
+  if (isAdminUser.value) {
+    return [
+      { label: 'Admin: Dashboard', href: '/portal/admin/dashboard' },
+      { label: 'Admin: Review', href: '/portal/admin/review' },
+      { label: 'Settings', href: '/portal/settings/integrations' },
+    ];
+  }
+
+  return [
+    { label: 'Client: Upload', href: '/portal/client/upload' },
+    { label: 'Client: Library', href: '/portal/client/library' },
+    { label: 'Settings', href: '/portal/settings/integrations' },
+  ];
+});
 
 function checkAuth() {
   isLoggedIn.value = !!localStorage.getItem('token');
+  isAdminUser.value = isLoggedIn.value && isAdmin();
 }
 
 function handleLogout() {
   logout();
   isLoggedIn.value = false;
+  isAdminUser.value = false;
   router.push('/login');
 }
 

@@ -77,8 +77,10 @@ async function doLogin() {
     success.value = true;
     
     // Give user feedback before redirecting
+    const destination = result?.user?.role === 'admin' ? '/admin/dashboard' : '/client/upload';
+
     setTimeout(() => {
-      router.replace('/client/upload');
+      router.replace(destination);
     }, 500);
   } catch (e: any) {
     console.error('Login error:', e);

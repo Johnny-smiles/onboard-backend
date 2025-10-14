@@ -3,6 +3,8 @@
 namespace Database\Seeders;
 
 use App\Models\Client;
+use App\Models\Photo;
+use App\Models\Project;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -18,31 +20,45 @@ class DatabaseSeeder extends Seeder
         $adminRole = Role::firstOrCreate(['name' => 'admin']);
         $clientRole = Role::firstOrCreate(['name' => 'client']);
 
-        $client = Client::firstOrCreate(
-            ['name' => 'Demo Co'],
-            [
-                'contact_email' => 'admin@example.com',
-                'brand_color' => '#0b5fff',
-            ]
-        );
-
         $admin = User::firstOrCreate(
             ['email' => 'admin@example.com'],
             [
                 'name' => 'Admin',
                 'password' => Hash::make('password'),
                 'role' => 'admin',
-                'client_id' => $client->id,
+                'client_id' => null,
             ]
         );
 
         $admin->syncRoles([$adminRole->name]);
 
-        $clientRoleName = $clientRole->name;
+        $clients = Client::factory()->count(4)->create();
 
-        User::factory()->count(3)->create()->each(function (User $user) use ($clientRoleName, $client) {
-            $user->update(['role' => 'client', 'client_id' => $client->id]);
-            $user->syncRoles([$clientRoleName]);
+        $clients->each(function (Client $client) use ($admin, $clientRole) {
+            $admin->managedClients()->syncWithoutDetaching($client->id);
+
+            $clientUsers = User::factory()
+                ->count(2)
+                ->forClient($client)
+                ->create();
+
+            $clientUsers->each(fn (User $user) => $user->syncRoles([$clientRole->name]));
+
+            $projects = Project::factory()->count(3)->for($client)->create();
+            $uploader = $clientUsers->first();
+
+            Photo::factory()
+                ->count(6)
+                ->state(function () use ($client, $uploader, $projects) {
+                    return [
+                        'client_id' => $client->id,
+                        'user_id' => $uploader?->id,
+                        'project_id' => $projects->isNotEmpty() && fake()->boolean(65)
+                            ? $projects->random()->id
+                            : null,
+                    ];
+                })
+                ->create();
         });
     }
 }

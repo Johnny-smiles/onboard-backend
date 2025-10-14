@@ -37,6 +37,11 @@ class User extends Authenticatable
         return $this->hasMany(Photo::class);
     }
 
+    public function managedClients()
+    {
+        return $this->belongsToMany(Client::class, 'admin_client', 'admin_id', 'client_id');
+    }
+
     public function scopeAdmins($query)
     {
         return $query->where(function ($subQuery) {

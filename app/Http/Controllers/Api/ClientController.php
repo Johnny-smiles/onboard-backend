@@ -2,10 +2,46 @@
 namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Client;
+use App\Models\Photo;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 class ClientController extends Controller
 {
-    public function index() { return response()->json(Client::withCount(['projects','photos'])->get()); }
+    public function index(Request $request)
+    {
+        $user = $request->user();
+
+        $query = Client::query()
+            ->addSelect([
+                'latest_photo_uploaded_at' => Photo::select('created_at')
+                    ->whereColumn('client_id', 'clients.id')
+                    ->latest()
+                    ->limit(1),
+            ])
+            ->withCount(['projects','photos','users'])
+            ->with([
+                'projects' => fn ($projects) => $projects
+                    ->select('id','client_id','name','start_date','end_date')
+                    ->latest('start_date')
+                    ->take(3),
+                'admins' => fn ($admins) => $admins
+                    ->select('users.id','users.name','users.email'),
+            ]);
+
+        if ($user?->role === 'admin') {
+            $query->whereHas('admins', function (Builder $builder) use ($user) {
+                $builder->where('users.id', $user->id);
+            });
+        } elseif ($user?->role === 'client' && $user->client_id) {
+            $query->where('id', $user->client_id);
+        } else {
+            $query->whereRaw('1 = 0');
+        }
+
+        return response()->json(
+            $query->orderBy('name')->get()
+        );
+    }
     public function store(Request $request)
     {
         $data = $request->validate([
