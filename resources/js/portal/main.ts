@@ -10,7 +10,12 @@ import ClientUpload from './views/ClientUpload.vue';
 import ClientLibrary from './views/ClientLibrary.vue';
 import AdminDashboard from './views/AdminDashboard.vue';
 import AdminReview from './views/AdminReview.vue';
-import SettingsIntegrations from './views/SettingsIntegrations.vue';
+import AdminClients from './views/AdminClients.vue';
+import AdminClientDetail from './views/AdminClientDetail.vue';
+import ClientSocialConnections from './views/ClientSocialConnections.vue';
+import ClientCapture from './views/ClientCapture.vue';
+import AdminShotRecipes from './views/AdminShotRecipes.vue';
+import AdminCaptureReminders from './views/AdminCaptureReminders.vue';
 
 import { isAdmin } from './services/auth';
 
@@ -19,9 +24,18 @@ const routes = [
   { path: '/login', component: Login, meta: { requiresGuest: true } },
   { path: '/client/upload', component: ClientUpload, meta: { requiresAuth: true } },
   { path: '/client/library', component: ClientLibrary, meta: { requiresAuth: true } },
+  { path: '/client/capture', component: ClientCapture, meta: { requiresAuth: true } },
   { path: '/admin/dashboard', component: AdminDashboard, meta: { requiresAuth: true, requiresAdmin: true } },
+  { path: '/admin/clients', component: AdminClients, meta: { requiresAuth: true, requiresAdmin: true } },
+  { path: '/admin/clients/:id', component: AdminClientDetail, meta: { requiresAuth: true, requiresAdmin: true } },
   { path: '/admin/review', component: AdminReview, meta: { requiresAuth: true, requiresAdmin: true } },
-  { path: '/settings/integrations', component: SettingsIntegrations, meta: { requiresAuth: true } },
+  { path: '/admin/shot-recipes', component: AdminShotRecipes, meta: { requiresAuth: true, requiresAdmin: true } },
+  { path: '/admin/capture-reminders', component: AdminCaptureReminders, meta: { requiresAuth: true, requiresAdmin: true } },
+  {
+    path: '/admin/clients/:id/social',
+    component: ClientSocialConnections,
+    meta: { requiresAuth: true, requiresAdmin: true },
+  },
 ];
 
 const router = createRouter({ history: createWebHistory('/portal'), routes });

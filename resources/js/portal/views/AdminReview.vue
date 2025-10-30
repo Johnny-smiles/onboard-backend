@@ -11,9 +11,23 @@
 
     <div class="card space-y-6">
       <div class="flex flex-wrap items-center justify-between gap-4">
-        <h2 class="text-xl font-semibold text-slate-900">Admin Review</h2>
+        <div>
+          <h2 class="text-xl font-semibold text-slate-900">
+            {{ clientFilter ? `Review: ${clientName}` : 'Admin Review (All Clients)' }}
+          </h2>
+          <p v-if="clientFilter" class="mt-1 text-sm text-slate-600">
+            Reviewing photos for this client only
+          </p>
+        </div>
 
         <div class="flex flex-wrap items-center gap-3 text-sm">
+          <label class="font-medium text-slate-600">Client</label>
+          <select v-model="clientFilter" class="input-control w-36 sm:w-44">
+            <option :value="null">All Clients</option>
+            <option v-for="client in clients" :key="client.id" :value="client.id">
+              {{ client.name }}
+            </option>
+          </select>
           <label class="font-medium text-slate-600">Approved</label>
           <select v-model="approved" class="input-control w-36 sm:w-44">
             <option :value="null">All</option>
@@ -47,7 +61,7 @@
 
           <div class="flex flex-wrap gap-2">
             <span class="badge">#{{ photo.id }}</span>
-            <span class="badge">Client {{ photo.client_id }}</span>
+            <span v-if="!clientFilter" class="badge">{{ photo.client?.name || `Client ${photo.client_id}` }}</span>
             <span class="badge">Score {{ photo.quality_score ?? '-' }}</span>
             <span class="badge">Approved: {{ photo.approved ? 'Yes' : 'No' }}</span>
           </div>
@@ -87,6 +101,7 @@
 
 <script setup lang="ts">
 import { onMounted, ref, watch } from 'vue';
+import { useRoute } from 'vue-router';
 import { toast } from 'vue-sonner';
 import BulkBar from '../components/BulkBar.vue';
 import CommentsPanel from '../components/CommentsPanel.vue';
@@ -95,14 +110,25 @@ import api from '../services/api';
 import Button from '../ui/Button.vue';
 
 type PhotoRecord = Record<string, any>;
+type ClientRecord = { id: number; name: string };
+
+const route = useRoute();
 
 const photos = ref<PhotoRecord[]>([]);
+const clients = ref<ClientRecord[]>([]);
+const clientFilter = ref<number | null>(null);
+const clientName = ref<string>('');
 const approved = ref<number | null>(null);
 const selected = ref<Set<number>>(new Set());
 const tagDraft = ref('');
 const showComments = ref(false);
 const activePhotoId = ref<number | null>(null);
 const showPublish = ref(false);
+
+// Initialize from query params
+if (route.query.client) {
+  clientFilter.value = Number(route.query.client);
+}
 
 function fileUrl(path: string): string {
   return `/storage/${path.replace(/^public\//, '')}`;
@@ -122,11 +148,30 @@ function toggle(id: number): void {
   refreshSelection();
 }
 
+async function loadClients(): Promise<void> {
+  try {
+    const { data } = await api.get('/clients');
+    clients.value = data;
+    
+    // If we have a client filter, get the client name
+    if (clientFilter.value) {
+      const client = clients.value.find(c => c.id === clientFilter.value);
+      clientName.value = client?.name || '';
+    }
+  } catch (error) {
+    console.error('Failed to load clients:', error);
+  }
+}
+
 async function load(): Promise<void> {
   const params: Record<string, unknown> = {};
 
   if (approved.value !== null) {
     params.approved = approved.value;
+  }
+
+  if (clientFilter.value !== null) {
+    params['filter[client_id]'] = clientFilter.value;
   }
 
   const { data } = await api.get('/photos', { params });
@@ -274,5 +319,13 @@ function onQueued(): void {
 }
 
 watch(approved, load);
-onMounted(load);
+watch(clientFilter, () => {
+  const client = clients.value.find(c => c.id === clientFilter.value);
+  clientName.value = client?.name || '';
+  load();
+});
+onMounted(() => {
+  loadClients();
+  load();
+});
 </script>

@@ -23,11 +23,19 @@ class Photo extends Model
         'quality_score',
         'approved',
         'edited_variants',
+        'job_name',
+        'location',
+        'shot_type',
         'notes',
+        'review_status',
+        'review_notes',
+        'reviewed_by',
+        'reviewed_at',
     ];
 
     protected $casts = [
         'edited_variants' => 'array',
+        'reviewed_at' => 'datetime',
     ];
 
     public function client()

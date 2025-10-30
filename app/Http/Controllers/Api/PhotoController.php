@@ -56,20 +56,38 @@ class PhotoController extends Controller
     {
         $data = $request->validate([
             'file' => 'required|image|max:8192',
-            'client_id' => 'required|exists:clients,id',
+            'client_id' => 'nullable|exists:clients,id',
             'project_id' => 'nullable|exists:projects,id',
             'caption' => 'nullable|string',
             'tags' => 'nullable|string',
+            'job_name' => 'nullable|string|max:255',
+            'location' => 'nullable|string|max:255',
+            'shot_type' => 'nullable|string|max:255',
+            'notes' => 'nullable|string',
         ]);
 
-        $path = $images->optimizeAndStore($request->file('file'), $data['client_id']);
+        $clientId = $data['client_id'] ?? $request->user()->client_id;
+
+        if (!$clientId) {
+            return response()->json(['message' => 'Client context is required for uploads.'], 422);
+        }
+
+        if ($request->user()->role !== 'admin' && $clientId !== $request->user()->client_id) {
+            return response()->json(['message' => 'You are not allowed to upload for another client.'], 403);
+        }
+
+        $path = $images->optimizeAndStore($request->file('file'), $clientId);
 
         $photo = Photo::create([
             'user_id' => $request->user()->id,
-            'client_id' => $data['client_id'],
+            'client_id' => $clientId,
             'project_id' => $data['project_id'] ?? null,
             'file_path' => $path,
             'caption' => $data['caption'] ?? null,
+            'job_name' => $data['job_name'] ?? null,
+            'location' => $data['location'] ?? null,
+            'shot_type' => $data['shot_type'] ?? null,
+            'notes' => $data['notes'] ?? null,
         ]);
 
         $images->scoreImage($photo);

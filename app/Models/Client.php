@@ -11,4 +11,7 @@ class Client extends Model
     public function projects() { return $this->hasMany(Project::class); }
     public function photos() { return $this->hasMany(Photo::class); }
     public function reminders() { return $this->hasMany(Reminder::class); }
+    public function socialIntegrations() { return $this->hasMany(SocialIntegration::class); }
+    public function shotRecipes() { return $this->hasMany(ShotRecipe::class); }
+    public function captureReminders() { return $this->hasMany(CaptureReminder::class); }
 }

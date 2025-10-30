@@ -46,16 +46,18 @@ const navLinks = computed(() => {
 
   if (isAdminUser.value) {
     return [
-      { label: 'Admin: Dashboard', href: '/portal/admin/dashboard' },
-      { label: 'Admin: Review', href: '/portal/admin/review' },
-      { label: 'Settings', href: '/portal/settings/integrations' },
+      { label: 'Dashboard', href: '/portal/admin/dashboard' },
+      { label: 'Clients', href: '/portal/admin/clients' },
+      { label: 'Review', href: '/portal/admin/review' },
+      { label: 'Shot Recipes', href: '/portal/admin/shot-recipes' },
+      { label: 'Capture Reminders', href: '/portal/admin/capture-reminders' },
     ];
   }
 
   return [
-    { label: 'Client: Upload', href: '/portal/client/upload' },
-    { label: 'Client: Library', href: '/portal/client/library' },
-    { label: 'Settings', href: '/portal/settings/integrations' },
+    { label: 'Capture', href: '/portal/client/capture' },
+    { label: 'Upload', href: '/portal/client/upload' },
+    { label: 'Library', href: '/portal/client/library' },
   ];
 });
 

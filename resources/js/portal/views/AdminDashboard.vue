@@ -27,7 +27,8 @@
       <article
         v-for="client in clients"
         :key="client.id"
-        class="card flex h-full flex-col space-y-4 border border-[var(--border)] transition hover:border-primary/60 hover:shadow-sm"
+        class="card flex h-full flex-col space-y-4 border border-[var(--border)] transition hover:border-primary/60 hover:shadow-sm cursor-pointer"
+        @click="$router.push(`/admin/clients/${client.id}`)"
       >
         <header class="space-y-1">
           <div class="flex items-center justify-between gap-3">
