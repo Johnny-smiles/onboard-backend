@@ -20,11 +20,20 @@ class User extends Authenticatable
         'password',
         'role',
         'client_id',
+        'google2fa_secret',
+        'google2fa_enabled',
+        'two_factor_recovery_codes',
     ];
 
     protected $hidden = [
         'password',
         'remember_token',
+        'google2fa_secret',
+        'two_factor_recovery_codes',
+    ];
+
+    protected $casts = [
+        'google2fa_enabled' => 'boolean',
     ];
 
     public function client()

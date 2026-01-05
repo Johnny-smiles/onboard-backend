@@ -17,6 +17,14 @@ return Application::configure(basePath: dirname(__DIR__))
         //     \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
         // ]);
 
+        // Add security headers to all requests
+        $middleware->append(\App\Http\Middleware\SecurityHeaders::class);
+
+        // Rate limiting for API routes
+        $middleware->api(prepend: [
+            \Illuminate\Routing\Middleware\ThrottleRequests::class.':api',
+        ]);
+
         $middleware->alias([
             'verified' => \App\Http\Middleware\EnsureEmailIsVerified::class,
         ]);

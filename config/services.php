@@ -35,4 +35,16 @@ return [
         ],
     ],
 
+    'facebook' => [
+        'client_id' => env('META_CLIENT_ID'),
+        'client_secret' => env('META_CLIENT_SECRET'),
+        'redirect' => env('META_REDIRECT_URI', env('APP_URL').'/oauth/callback/meta'),
+    ],
+
+    'google' => [
+        'client_id' => env('GOOGLE_CLIENT_ID'),
+        'client_secret' => env('GOOGLE_CLIENT_SECRET'),
+        'redirect' => env('GOOGLE_REDIRECT_URI', env('APP_URL').'/oauth/callback/google'),
+    ],
+
 ];

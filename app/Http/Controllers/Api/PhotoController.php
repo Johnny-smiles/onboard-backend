@@ -55,15 +55,21 @@ class PhotoController extends Controller
     public function store(Request $request, ImageService $images)
     {
         $data = $request->validate([
-            'file' => 'required|image|max:8192',
+            'file' => [
+                'required',
+                'file',
+                'mimes:jpeg,jpg,png,webp,heic', // Specific image types only
+                'max:10240', // 10MB max
+                'dimensions:max_width=8000,max_height=8000', // Prevent huge images
+            ],
             'client_id' => 'nullable|exists:clients,id',
             'project_id' => 'nullable|exists:projects,id',
-            'caption' => 'nullable|string',
-            'tags' => 'nullable|string',
+            'caption' => 'nullable|string|max:2000', // Limit caption length
+            'tags' => 'nullable|string|max:500',
             'job_name' => 'nullable|string|max:255',
             'location' => 'nullable|string|max:255',
             'shot_type' => 'nullable|string|max:255',
-            'notes' => 'nullable|string',
+            'notes' => 'nullable|string|max:1000',
         ]);
 
         $clientId = $data['client_id'] ?? $request->user()->client_id;
