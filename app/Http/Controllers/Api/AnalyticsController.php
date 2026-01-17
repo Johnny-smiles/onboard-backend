@@ -8,6 +8,7 @@ use App\Models\PhotoPublication;
 use App\Models\SocialIntegration;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class AnalyticsController extends Controller
@@ -30,12 +31,16 @@ class AnalyticsController extends Controller
             $clientId = $user->client_id;
         }
 
-        return response()->json([
-            'photos' => $this->getPhotoStats($clientId),
-            'publications' => $this->getPublicationStats($clientId),
-            'integrations' => $this->getIntegrationStats($clientId),
-            'activity' => $this->getActivityStats($clientId),
-        ]);
+        $cacheKey = 'dashboard_stats:'.($clientId ?? 'all');
+
+        return response()->json(Cache::remember($cacheKey, now()->addMinutes(5), function () use ($clientId) {
+            return [
+                'photos' => $this->getPhotoStats($clientId),
+                'publications' => $this->getPublicationStats($clientId),
+                'integrations' => $this->getIntegrationStats($clientId),
+                'activity' => $this->getActivityStats($clientId),
+            ];
+        }));
     }
 
     /**
@@ -96,13 +101,28 @@ class AnalyticsController extends Controller
             $query->where('client_id', $clientId);
         }
 
+        // Single query with conditional aggregates instead of multiple cloned queries
+        $stats = (clone $query)->selectRaw('
+            COUNT(*) as total,
+            SUM(CASE WHEN approved = 1 THEN 1 ELSE 0 END) as approved,
+            SUM(CASE WHEN approved = 0 THEN 1 ELSE 0 END) as pending_review,
+            SUM(CASE WHEN DATE(created_at) = ? THEN 1 ELSE 0 END) as uploaded_today,
+            SUM(CASE WHEN created_at BETWEEN ? AND ? THEN 1 ELSE 0 END) as uploaded_this_week,
+            SUM(CASE WHEN strftime("%m", created_at) = ? THEN 1 ELSE 0 END) as uploaded_this_month
+        ', [
+            today()->toDateString(),
+            now()->startOfWeek()->toDateTimeString(),
+            now()->endOfWeek()->toDateTimeString(),
+            now()->format('m'),
+        ])->first();
+
         return [
-            'total' => $query->count(),
-            'pending_review' => (clone $query)->where('approved', false)->count(),
-            'approved' => (clone $query)->where('approved', true)->count(),
-            'uploaded_today' => (clone $query)->whereDate('created_at', today())->count(),
-            'uploaded_this_week' => (clone $query)->whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()])->count(),
-            'uploaded_this_month' => (clone $query)->whereMonth('created_at', now()->month)->count(),
+            'total' => (int) $stats->total,
+            'pending_review' => (int) $stats->pending_review,
+            'approved' => (int) $stats->approved,
+            'uploaded_today' => (int) $stats->uploaded_today,
+            'uploaded_this_week' => (int) $stats->uploaded_this_week,
+            'uploaded_this_month' => (int) $stats->uploaded_this_month,
 
             'by_shot_type' => (clone $query)->select('shot_type')
                 ->selectRaw('COUNT(*) as count')
@@ -122,19 +142,31 @@ class AnalyticsController extends Controller
             });
         }
 
-        $total = $query->count();
-        $published = (clone $query)->where('status', 'published')->count();
+        // Single query with conditional aggregates instead of multiple cloned queries
+        $stats = (clone $query)->selectRaw('
+            COUNT(*) as total,
+            SUM(CASE WHEN status = "published" THEN 1 ELSE 0 END) as published,
+            SUM(CASE WHEN status = "queued" THEN 1 ELSE 0 END) as queued,
+            SUM(CASE WHEN status = "failed" THEN 1 ELSE 0 END) as failed,
+            SUM(CASE WHEN status = "published" AND DATE(published_at) = ? THEN 1 ELSE 0 END) as published_today,
+            SUM(CASE WHEN status = "published" AND published_at BETWEEN ? AND ? THEN 1 ELSE 0 END) as published_this_week
+        ', [
+            today()->toDateString(),
+            now()->startOfWeek()->toDateTimeString(),
+            now()->endOfWeek()->toDateTimeString(),
+        ])->first();
+
+        $total = (int) $stats->total;
+        $published = (int) $stats->published;
 
         return [
             'total' => $total,
             'published' => $published,
-            'queued' => (clone $query)->where('status', 'queued')->count(),
-            'failed' => (clone $query)->where('status', 'failed')->count(),
+            'queued' => (int) $stats->queued,
+            'failed' => (int) $stats->failed,
             'success_rate' => $total > 0 ? round(($published / $total) * 100, 2) : 0,
-            'published_today' => (clone $query)->where('status', 'published')
-                ->whereDate('published_at', today())->count(),
-            'published_this_week' => (clone $query)->where('status', 'published')
-                ->whereBetween('published_at', [now()->startOfWeek(), now()->endOfWeek()])->count(),
+            'published_today' => (int) $stats->published_today,
+            'published_this_week' => (int) $stats->published_this_week,
 
             'by_service' => (clone $query)->select('service')
                 ->selectRaw('COUNT(*) as total')

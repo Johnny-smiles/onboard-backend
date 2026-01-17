@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\ScoreImageJob;
 use App\Models\Photo;
 use App\Models\User;
 use App\Notifications\NewPhotoUploaded;
@@ -97,7 +98,7 @@ class PhotoController extends Controller
             'notes' => $data['notes'] ?? null,
         ]);
 
-        $images->scoreImage($photo);
+        ScoreImageJob::dispatch($photo->id);
 
         if (!empty($data['tags'])) {
             $tags = array_filter(array_map('trim', explode(',', $data['tags'])));

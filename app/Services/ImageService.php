@@ -66,9 +66,9 @@ class ImageService
             $brightness = 0;
             $n = 0;
 
-            // Sample pixel brightness across the image
-            for ($x = 0; $x < 32; $x++) {
-                for ($y = 0; $y < 32; $y++) {
+            // Statistical sampling: 64 pixels instead of 1024 (every 4th pixel)
+            for ($x = 0; $x < 32; $x += 4) {
+                for ($y = 0; $y < 32; $y += 4) {
                     $color = $img->pickColor($x, $y)->toArray();
                     $brightness += ($color[0] + $color[1] + $color[2]) / 3 / 255;
                     $n++;

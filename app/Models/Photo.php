@@ -68,6 +68,26 @@ class Photo extends Model
         return $this->hasMany(PhotoPublication::class);
     }
 
+    public function reviewer()
+    {
+        return $this->belongsTo(User::class, 'reviewed_by');
+    }
+
+    public function scopePendingReview($query)
+    {
+        return $query->where('approved', false);
+    }
+
+    public function scopeApproved($query)
+    {
+        return $query->where('approved', true);
+    }
+
+    public function scopeForClient($query, $clientId)
+    {
+        return $query->where('client_id', $clientId);
+    }
+
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
