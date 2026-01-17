@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Notifications\NewPhotoUploaded;
 use App\Services\ImageService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
@@ -106,7 +107,7 @@ class PhotoController extends Controller
             }
         }
 
-        User::admins()->get()->each(fn ($admin) => $admin->notify(new NewPhotoUploaded($photo)));
+        Notification::send(User::admins()->get(), new NewPhotoUploaded($photo));
 
         return response()->json($photo, 201);
     }

@@ -12,6 +12,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Notification;
 
 class RefreshSocialTokens implements ShouldQueue
 {
@@ -50,10 +51,7 @@ class RefreshSocialTokens implements ShouldQueue
                 $hoursUntilExpiry = now()->diffInHours($integration->expires_at, false);
                 if ($hoursUntilExpiry <= 48) {
                     // Notify all admins about the expiring token
-                    $admins = User::admins()->get();
-                    foreach ($admins as $admin) {
-                        $admin->notify(new SocialTokenExpiringNotification($integration));
-                    }
+                    Notification::send(User::admins()->get(), new SocialTokenExpiringNotification($integration));
                 }
             }
         }

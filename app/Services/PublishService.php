@@ -27,8 +27,11 @@ class PublishService
         $scheduled = $when ? Carbon::parse($when) : now();
         $ids = [];
 
+        // Single query with keyBy to avoid N+1
+        $photos = Photo::whereIn('id', $photoIds)->get()->keyBy('id');
+
         foreach ($photoIds as $pid) {
-            $photo = Photo::find($pid);
+            $photo = $photos->get($pid);
 
             if (!$photo) {
                 continue;
@@ -58,6 +61,7 @@ class PublishService
     {
         $due = PhotoPublication::where('status', 'queued')
             ->where('scheduled_at', '<=', now())
+            ->with('photo:id,client_id,caption,file_path')
             ->get();
 
         $count = 0;
