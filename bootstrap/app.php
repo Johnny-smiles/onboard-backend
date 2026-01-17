@@ -12,12 +12,7 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        // Removed EnsureFrontendRequestsAreStateful for pure token-based API
-        // $middleware->api(prepend: [
-        //     \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
-        // ]);
-
-        // Add security headers to all requests
+        // Add security headers to all responses
         $middleware->append(\App\Http\Middleware\SecurityHeaders::class);
 
         // Rate limiting for API routes
@@ -28,9 +23,11 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'verified' => \App\Http\Middleware\EnsureEmailIsVerified::class,
         ]);
-
-        //
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        $exceptions->reportable(function (Throwable $e): void {
+            if (app()->bound('sentry') && config('sentry.dsn')) {
+                \Sentry\captureException($e);
+            }
+        });
     })->create();
