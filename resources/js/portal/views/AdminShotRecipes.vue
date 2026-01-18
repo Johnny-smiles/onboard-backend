@@ -1,13 +1,14 @@
 <template>
   <div class="space-y-6">
-    <header class="space-y-1">
+    <section class="page-header space-y-3">
+      <p class="eyebrow">Capture playbooks</p>
       <h1 class="text-2xl font-semibold text-[var(--text)]">Shot recipes</h1>
       <p class="text-sm text-[var(--text-2)]">
         Define capture playbooks for clients. Leave client blank to create a global recipe.
       </p>
-    </header>
+    </section>
 
-    <section class="card space-y-4">
+    <section class="section-card">
       <div class="grid gap-3 md:grid-cols-2">
         <div class="space-y-1">
           <label class="text-xs font-semibold uppercase tracking-wide text-[var(--text-2)]" for="client">
@@ -25,7 +26,7 @@
         </div>
       </div>
 
-      <div class="overflow-hidden rounded-xl border border-[var(--border)]">
+      <div class="table-shell">
         <table class="min-w-full divide-y divide-[var(--border)] text-left text-sm">
           <thead class="bg-[var(--surface-2)] text-xs uppercase tracking-wide text-[var(--text-2)]">
             <tr>
@@ -41,7 +42,7 @@
                 No recipes yet. Create one using the form below.
               </td>
             </tr>
-            <tr v-for="recipe in recipes" :key="recipe.id">
+            <tr v-for="recipe in recipes" :key="recipe.id" class="table-row">
               <td class="px-4 py-3 font-medium text-[var(--text)]">
                 {{ recipe.name }}
               </td>
@@ -67,9 +68,9 @@
       </div>
     </section>
 
-    <section class="card space-y-4">
-      <header class="space-y-1">
-        <h2 class="text-xl font-semibold text-[var(--text)]">
+    <section class="section-card">
+      <header class="space-y-2">
+        <h2 class="section-title">
           {{ form.id ? 'Edit recipe' : 'Create recipe' }}
         </h2>
         <p class="text-sm text-[var(--text-2)]">

@@ -1,7 +1,8 @@
 <template>
   <div class="space-y-6">
-    <header class="flex flex-col gap-4 rounded-lg border border-[var(--border)] bg-[var(--surface)] p-5 shadow-sm md:flex-row md:items-center md:justify-between">
-      <div>
+    <section class="page-header flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+      <div class="space-y-2">
+        <p class="eyebrow">Social studio</p>
         <h2 class="text-xl font-semibold text-[var(--text)]">
           {{ clientName ? `${clientName} social connections` : 'Client social connections' }}
         </h2>
@@ -11,18 +12,14 @@
         </p>
       </div>
       <div class="flex flex-wrap items-center gap-3">
-        <button
-          class="rounded-md border border-[var(--border)] px-3 py-2 text-sm font-medium text-[var(--text-2)] transition hover:border-primary/50 hover:text-primary"
-          type="button"
-          @click="goBack"
-        >
+        <Button variant="ghost" type="button" @click="goBack">
           Back to admin dashboard
-        </button>
-        <span v-if="clientId" class="rounded-md bg-[var(--surface-2)] px-3 py-2 text-xs font-semibold uppercase tracking-wide text-[var(--text-3)]">
+        </Button>
+        <span v-if="clientId" class="chip">
           Client ID: {{ clientId }}
         </span>
       </div>
-    </header>
+    </section>
 
     <section v-if="loading" class="grid gap-4 md:grid-cols-2">
       <div v-for="index in 3" :key="index" class="card h-56 animate-pulse space-y-3">
@@ -64,7 +61,7 @@
             </p>
           </header>
 
-          <div v-if="integrationMap[provider.key]" class="space-y-3 rounded-lg bg-[var(--surface-2)] p-4 text-sm text-[var(--text-2)]">
+          <div v-if="integrationMap[provider.key]" class="space-y-3 rounded-2xl bg-[var(--surface-2)] p-4 text-sm text-[var(--text-2)]">
             <div class="flex items-center justify-between gap-3">
               <span class="font-medium text-[var(--text)]">Account</span>
               <span>{{ integrationMap[provider.key]?.account_name || 'Not provided' }}</span>
@@ -89,49 +86,49 @@
             </div>
             <div v-if="hasExternalIds(provider.key)" class="space-y-1">
               <span class="font-medium text-[var(--text)]">External IDs</span>
-              <pre class="whitespace-pre-wrap rounded-md bg-[var(--surface-3)] p-3 text-xs text-[var(--text-3)]">
+              <pre class="whitespace-pre-wrap rounded-2xl bg-[var(--surface-3)] p-3 text-xs text-[var(--text-3)]">
 {{ formatExternalIds(integrationMap[provider.key]?.external_ids) }}</pre>
             </div>
-            <button
-              class="w-full rounded-md bg-danger/10 px-3 py-2 text-sm font-semibold text-danger transition hover:bg-danger/20"
+            <Button
+              class="w-full"
+              variant="danger"
               type="button"
               :disabled="isDeleting(provider.key)"
               @click="disconnect(provider.key)"
             >
               {{ isDeleting(provider.key) ? 'Removing...' : 'Disconnect provider' }}
-            </button>
+            </Button>
           </div>
 
-          <div class="space-y-3 rounded-lg bg-[var(--surface-2)] p-4 text-sm text-[var(--text-2)]">
+          <div class="space-y-3 rounded-2xl bg-[var(--surface-2)] p-4 text-sm text-[var(--text-2)]">
             <label class="block text-xs font-semibold uppercase tracking-wide text-[var(--text-3)]" :for="`account-${provider.key}`">
               Account label (optional)
             </label>
             <input
-              class="w-full rounded-md border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm text-[var(--text)] outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/10"
+              class="input-control"
               :id="`account-${provider.key}`"
               type="text"
               v-model="accountNames[provider.key]"
               placeholder="e.g. Main Brand Page"
             />
             <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-              <button
-                class="rounded-md bg-primary px-4 py-2 text-sm font-semibold text-white shadow transition hover:bg-primary/90 disabled:opacity-60"
+              <Button
                 type="button"
                 :disabled="isSaving(provider.key)"
                 @click="connect(provider.key)"
               >
                 {{ isSaving(provider.key) ? 'Saving...' : integrationMap[provider.key] ? 'Update details' : 'Save connection' }}
-              </button>
-              <button
-                class="rounded-md border border-[var(--border)] px-4 py-2 text-sm font-semibold text-[var(--text-2)] transition hover:border-primary/50 hover:text-primary disabled:opacity-60"
+              </Button>
+              <Button
+                variant="ghost"
                 type="button"
                 :disabled="isRedirecting(provider.key)"
                 @click="loadRedirect(provider.key)"
               >
                 {{ isRedirecting(provider.key) ? 'Loading redirect...' : 'Get redirect URL' }}
-              </button>
+              </Button>
             </div>
-            <p v-if="redirectUrls[provider.key]" class="rounded-md bg-[var(--surface-3)] p-3 text-xs text-[var(--text-3)]">
+            <p v-if="redirectUrls[provider.key]" class="rounded-2xl bg-[var(--surface-3)] p-3 text-xs text-[var(--text-3)]">
               Redirect preview: <span class="font-mono">{{ redirectUrls[provider.key] }}</span>
             </p>
             <p v-if="providerErrors[provider.key]" class="text-sm text-danger">
@@ -148,6 +145,7 @@
 import { computed, reactive, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import api from '../services/api';
+import Button from '../ui/Button.vue';
 
 type ClientRecord = {
   id: number;

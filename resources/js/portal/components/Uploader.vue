@@ -1,23 +1,27 @@
 <template>
-  <section class="card space-y-6">
-    <header class="space-y-1">
-      <h3 class="text-xl font-semibold text-[var(--text)]">Upload photos</h3>
+  <section class="section-card">
+    <header class="space-y-2">
+      <div class="flex items-center justify-between gap-3">
+        <h3 class="section-title">Upload photos</h3>
+        <span class="chip">Studio drop</span>
+      </div>
       <p class="text-sm text-[var(--text-2)]">Drag &amp; drop JPEGs/PNGs or select files from your device.</p>
     </header>
     <div
-      class="flex min-h-[180px] cursor-pointer flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed border-[var(--border)] bg-[var(--surface-2)] px-6 py-10 text-center transition-colors duration-brand ease-brand hover:border-primary hover:bg-[var(--surface-3)]"
+      class="drop-zone flex min-h-[180px] cursor-pointer flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed bg-[var(--surface-2)] px-6 py-10 text-center transition-colors duration-brand ease-brand hover:border-primary"
       @click="pick"
       @dragover.prevent
       @drop.prevent="onDrop"
     >
-      <p v-if="files.length === 0" class="text-sm text-[var(--text-2)]">
-        Drop images here or click to browse
-      </p>
+      <div v-if="files.length === 0" class="space-y-2 text-center">
+        <p class="text-sm text-[var(--text-2)]">Drop images here or click to browse</p>
+        <p class="text-xs text-[var(--text-3)]">We will resize to 2048px wide and keep things crisp.</p>
+      </div>
       <ul v-else class="w-full space-y-2 text-left">
         <li
           v-for="file in files"
           :key="file.id"
-          class="flex items-center justify-between gap-3 rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm text-[var(--text-2)]"
+          class="flex items-center justify-between gap-3 rounded-2xl border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm text-[var(--text-2)]"
         >
           <span class="truncate">
             {{ file.file.name }} ({{ Math.round(file.file.size / 1024) }} KB)

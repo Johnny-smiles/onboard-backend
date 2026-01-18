@@ -1,13 +1,14 @@
 <template>
   <div class="space-y-6">
-    <header class="space-y-1">
+    <section class="page-header space-y-3">
+      <p class="eyebrow">Nudge engine</p>
       <h1 class="text-2xl font-semibold text-[var(--text)]">Capture reminders</h1>
       <p class="text-sm text-[var(--text-2)]">
         Schedule nudges that keep clients sending fresh content. Reminders are sent via email or SMS.
       </p>
-    </header>
+    </section>
 
-    <section class="card space-y-4">
+    <section class="section-card">
       <div class="grid gap-3 md:grid-cols-[2fr,1fr,auto]">
         <div class="space-y-1">
           <label class="text-xs font-semibold uppercase tracking-wide text-[var(--text-2)]" for="remClient">
@@ -36,7 +37,7 @@
         </div>
       </div>
 
-      <div class="overflow-hidden rounded-xl border border-[var(--border)]">
+      <div class="table-shell">
         <table class="min-w-full divide-y divide-[var(--border)] text-left text-sm">
           <thead class="bg-[var(--surface-2)] text-xs uppercase tracking-wide text-[var(--text-2)]">
             <tr>
@@ -54,7 +55,7 @@
                 No reminders configured. Create one below.
               </td>
             </tr>
-            <tr v-for="reminder in reminders" :key="reminder.id">
+            <tr v-for="reminder in reminders" :key="reminder.id" class="table-row">
               <td class="px-4 py-3 font-medium text-[var(--text)]">
                 {{ reminder.title }}
               </td>
@@ -86,9 +87,9 @@
       </div>
     </section>
 
-    <section class="card space-y-4">
-      <header class="space-y-1">
-        <h2 class="text-xl font-semibold text-[var(--text)]">
+    <section class="section-card">
+      <header class="space-y-2">
+        <h2 class="section-title">
           {{ form.id ? 'Edit reminder' : 'Create reminder' }}
         </h2>
         <p class="text-sm text-[var(--text-2)]">

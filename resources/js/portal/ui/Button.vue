@@ -9,7 +9,7 @@ import { computed, useAttrs } from 'vue';
 
 const props = withDefaults(
   defineProps<{
-    variant?: 'primary' | 'secondary' | 'danger';
+    variant?: 'primary' | 'secondary' | 'danger' | 'ghost';
     size?: 'sm' | 'md' | 'lg';
   }>(),
   {
@@ -26,7 +26,9 @@ const classes = computed(() => [
     ? 'btn-secondary'
     : props.variant === 'danger'
       ? 'btn-danger'
-      : 'btn-primary',
+      : props.variant === 'ghost'
+        ? 'btn-ghost'
+        : 'btn-primary',
   props.size === 'sm'
     ? 'h-8 px-2 text-xs'
     : props.size === 'lg'

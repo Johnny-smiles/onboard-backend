@@ -1,11 +1,23 @@
 <template>
-  <div class="flex min-h-[70vh] items-center justify-center px-4">
-    <div class="w-full max-w-md space-y-6">
-      <div class="text-center">
-        <h2 class="text-2xl font-semibold text-[var(--text)]">Welcome back</h2>
-        <p class="mt-2 text-sm text-[var(--text-2)]">Sign in to manage your brand assets.</p>
-      </div>
-      <div class="card space-y-6">
+  <div class="flex min-h-[75vh] items-center justify-center px-4">
+    <div class="w-full max-w-5xl">
+      <div class="grid gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
+        <section class="page-header space-y-4">
+          <p class="eyebrow">Brand Studio Portal</p>
+          <h2 class="display-title font-semibold text-[var(--text)]">
+            Build bold brand moments for small businesses.
+          </h2>
+          <p class="text-sm text-[var(--text-2)]">
+            Curate visual stories, keep shoots on track, and deliver publish-ready assets without the chaos.
+          </p>
+          <div class="flex flex-wrap gap-2">
+            <span class="badge">Capture plans</span>
+            <span class="badge">Approval flow</span>
+            <span class="badge">Instant publishing</span>
+          </div>
+        </section>
+
+        <div class="card card-glow space-y-6">
         <form class="space-y-4" @submit.prevent="doLogin">
           <div class="space-y-2">
             <label class="text-sm font-medium text-[var(--text-2)]" for="email">Email</label>
@@ -40,6 +52,7 @@
           Tip: use <span class="font-semibold">admin@example.com</span> / <span class="font-semibold">password</span> for
           the demo account.
         </p>
+        </div>
       </div>
     </div>
   </div>

@@ -1,11 +1,12 @@
 <template>
   <div class="space-y-6">
-    <header class="space-y-2">
-      <h2 class="text-2xl font-semibold text-[var(--text)]">Client Overview</h2>
+    <section class="page-header space-y-3">
+      <p class="eyebrow">Admin overview</p>
+      <h2 class="text-2xl font-semibold text-[var(--text)]">Client overview</h2>
       <p class="text-sm text-[var(--text-2)]">
         Welcome back, {{ adminUser?.name || 'Admin' }}. Here is a quick snapshot of the clients you manage.
       </p>
-    </header>
+    </section>
 
     <section v-if="loading" class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
       <div v-for="index in 3" :key="index" class="card animate-pulse space-y-4">
@@ -30,12 +31,12 @@
         class="card flex h-full flex-col space-y-4 border border-[var(--border)] transition hover:border-primary/60 hover:shadow-sm cursor-pointer"
         @click="$router.push(`/admin/clients/${client.id}`)"
       >
-        <header class="space-y-1">
+        <header class="space-y-2">
           <div class="flex items-center justify-between gap-3">
             <h3 class="text-lg font-semibold text-[var(--text)]">{{ client.name }}</h3>
             <span
-              class="inline-flex h-2 w-2 rounded-full"
-              :style="{ backgroundColor: client.brand_color || '#6366f1' }"
+              class="inline-flex h-3 w-3 rounded-full"
+              :style="{ backgroundColor: client.brand_color || '#FF4D5A' }"
             />
           </div>
           <p v-if="client.contact_email" class="text-sm text-[var(--text-2)]">
@@ -47,20 +48,20 @@
         </header>
 
         <dl class="grid grid-cols-2 gap-3 text-sm">
-          <div class="rounded-lg bg-[var(--surface-2)] p-3">
-            <dt class="text-[var(--text-2)]">Projects</dt>
-            <dd class="text-xl font-semibold text-[var(--text)]">{{ client.projects_count }}</dd>
+          <div class="stat-tile">
+            <dt class="stat-label">Projects</dt>
+            <dd class="stat-value">{{ client.projects_count }}</dd>
           </div>
-          <div class="rounded-lg bg-[var(--surface-2)] p-3">
-            <dt class="text-[var(--text-2)]">Photos</dt>
-            <dd class="text-xl font-semibold text-[var(--text)]">{{ client.photos_count }}</dd>
+          <div class="stat-tile">
+            <dt class="stat-label">Photos</dt>
+            <dd class="stat-value">{{ client.photos_count }}</dd>
           </div>
-          <div class="rounded-lg bg-[var(--surface-2)] p-3">
-            <dt class="text-[var(--text-2)]">Users</dt>
-            <dd class="text-xl font-semibold text-[var(--text)]">{{ client.users_count }}</dd>
+          <div class="stat-tile">
+            <dt class="stat-label">Users</dt>
+            <dd class="stat-value">{{ client.users_count }}</dd>
           </div>
-          <div class="rounded-lg bg-[var(--surface-2)] p-3">
-            <dt class="text-[var(--text-2)]">Last upload</dt>
+          <div class="stat-tile">
+            <dt class="stat-label">Last upload</dt>
             <dd class="text-sm font-medium text-[var(--text)]">
               {{ formatDate(client.latest_photo_uploaded_at) }}
             </dd>
@@ -75,7 +76,7 @@
             <li
               v-for="project in client.projects"
               :key="project.id"
-              class="flex items-center justify-between gap-3 rounded-md bg-[var(--surface-2)] px-3 py-2"
+              class="flex items-center justify-between gap-3 rounded-2xl bg-[var(--surface-2)] px-3 py-2"
             >
               <span class="font-medium text-[var(--text)]">{{ project.name }}</span>
               <span class="text-xs text-[var(--text-3)]">
@@ -88,7 +89,7 @@
           </ul>
         </div>
 
-        <p v-if="client.notes" class="rounded-md bg-[var(--surface-2)] p-3 text-sm text-[var(--text-2)]">
+        <p v-if="client.notes" class="rounded-2xl bg-[var(--surface-2)] p-3 text-sm text-[var(--text-2)]">
           {{ client.notes }}
         </p>
 

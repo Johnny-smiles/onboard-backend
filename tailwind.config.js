@@ -9,14 +9,14 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: '#0B5FFF',
-        'primary-600': '#0A54E6',
-        'primary-700': '#094BCC',
-        secondary: '#7C3AED',
-        success: '#16A34A',
-        warning: '#D97706',
-        danger: '#DC2626',
-        info: '#0891B2',
+        primary: '#FF4D5A',
+        'primary-600': '#F13B4B',
+        'primary-700': '#D72E3D',
+        secondary: '#1BB8A7',
+        success: '#22C55E',
+        warning: '#F59E0B',
+        danger: '#EF4444',
+        info: '#2D7FF9',
       },
       container: {
         center: true,

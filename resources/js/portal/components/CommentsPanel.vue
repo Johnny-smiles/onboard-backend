@@ -1,12 +1,15 @@
 <template>
-  <section class="card space-y-4">
-    <header class="space-y-1">
-      <h3 class="text-lg font-semibold text-[var(--text)]">Comments</h3>
+  <section class="section-card">
+    <header class="space-y-2">
+      <div class="flex items-center justify-between">
+        <h3 class="section-title">Comments</h3>
+        <span class="chip">Team notes</span>
+      </div>
       <p class="text-xs text-[var(--text-2)]">Discuss edits or approvals with your team.</p>
     </header>
     <div
       v-if="items.length === 0"
-      class="rounded-lg border border-dashed border-[var(--border)] bg-[var(--surface-2)] px-4 py-6 text-center text-sm text-[var(--text-2)]"
+      class="rounded-2xl border border-dashed border-[var(--border)] bg-[var(--surface-2)] px-4 py-6 text-center text-sm text-[var(--text-2)]"
     >
       No comments yet.
     </div>
@@ -14,7 +17,7 @@
       <li
         v-for="comment in items"
         :key="comment.id"
-        class="space-y-1 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-3"
+        class="space-y-1 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-3"
       >
         <p class="text-xs font-semibold uppercase tracking-wide text-primary">
           {{ comment.user?.name || 'User' }}

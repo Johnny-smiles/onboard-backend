@@ -1,56 +1,78 @@
 <template>
-  <div class="grid gap-6 lg:grid-cols-[2fr_1fr]">
-    <Uploader @upload="onUpload" />
-
-    <aside class="card space-y-4">
-      <header class="space-y-1">
-        <h3 class="text-lg font-semibold text-[var(--text)]">Quick metadata</h3>
-        <p class="text-sm text-[var(--text-2)]">Applied to every photo in the current upload batch.</p>
-      </header>
-      <div class="space-y-3">
+  <div class="space-y-6">
+    <section class="page-header space-y-4">
+      <div class="flex flex-wrap items-center justify-between gap-4">
         <div class="space-y-2">
-          <label class="text-sm font-medium text-[var(--text-2)]" for="tags">Tags</label>
-          <input
-            id="tags"
-            v-model="tags"
-            class="input-control"
-            placeholder="before, team"
-            type="text"
-          />
-          <p class="text-xs text-[var(--text-2)]">Separate tags with commas to add multiple.</p>
+          <p class="eyebrow">Upload studio</p>
+          <h2 class="text-2xl font-semibold text-[var(--text)]">Drop a new batch</h2>
+          <p class="text-sm text-[var(--text-2)]">
+            Keep your brand library fresh with consistent tags and captions.
+          </p>
         </div>
-        <div class="space-y-2">
-          <label class="text-sm font-medium text-[var(--text-2)]" for="caption">Caption</label>
-          <input
-            id="caption"
-            v-model="caption"
-            class="input-control"
-            placeholder="Describe the photo…"
-            type="text"
-          />
-        </div>
-        <div class="space-y-2">
-          <label class="text-sm font-medium text-[var(--text-2)]" for="client">Client ID</label>
-          <input
-            id="client"
-            v-model.number="clientId"
-            class="input-control"
-            min="1"
-            type="number"
-          />
+        <div class="flex flex-wrap gap-2">
+          <span class="badge">JPEG + PNG</span>
+          <span class="badge">Auto resize</span>
+          <span class="badge">Batch ready</span>
         </div>
       </div>
-    </aside>
+    </section>
+
+    <div class="hero-grid">
+      <Uploader @upload="onUpload" />
+
+      <aside class="section-card">
+        <header class="space-y-2">
+          <div class="flex items-center justify-between gap-2">
+            <h3 class="section-title">Quick metadata</h3>
+            <span class="chip">Batch apply</span>
+          </div>
+          <p class="text-sm text-[var(--text-2)]">Applied to every photo in the current upload batch.</p>
+        </header>
+        <div class="space-y-3">
+          <div class="space-y-2">
+            <label class="text-sm font-medium text-[var(--text-2)]" for="tags">Tags</label>
+            <input
+              id="tags"
+              v-model="tags"
+              class="input-control"
+              placeholder="before, team"
+              type="text"
+            />
+            <p class="text-xs text-[var(--text-2)]">Separate tags with commas to add multiple.</p>
+          </div>
+          <div class="space-y-2">
+            <label class="text-sm font-medium text-[var(--text-2)]" for="caption">Caption</label>
+            <input
+              id="caption"
+              v-model="caption"
+              class="input-control"
+              placeholder="Describe the photo…"
+              type="text"
+            />
+          </div>
+          <div class="space-y-2">
+            <label class="text-sm font-medium text-[var(--text-2)]" for="client">Client ID</label>
+            <input
+              id="client"
+              v-model.number="clientId"
+              class="input-control"
+              min="1"
+              type="number"
+            />
+          </div>
+        </div>
+      </aside>
+    </div>
 
     <div
       v-if="ok"
-      class="card border border-success/30 bg-success/5 text-success"
+      class="panel border border-success/30 bg-success/5 text-success"
     >
       Uploaded! Your photos are processing.
     </div>
     <div
       v-if="err"
-      class="card border border-danger/30 bg-danger/5 text-danger"
+      class="panel border border-danger/30 bg-danger/5 text-danger"
     >
       {{ err }}
     </div>

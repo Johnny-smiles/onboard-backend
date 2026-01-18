@@ -1,27 +1,42 @@
 <template>
-  <div class="min-h-screen bg-[var(--surface-2)] text-[var(--text)] transition-colors duration-brand">
+  <div class="app-shell min-h-screen text-[var(--text)] transition-colors duration-brand">
     <header
       v-if="isLoggedIn"
-      class="sticky top-0 z-50 border-b border-[var(--border)] bg-[var(--surface)]/90 backdrop-blur"
+      class="glass-panel sticky top-0 z-50 border-b border-[var(--border)]"
     >
-      <div class="container mx-auto flex max-w-screen-xl items-center justify-between gap-6 py-4">
-        <div>
-          <h1 class="text-lg font-semibold text-[var(--text)]">On Brand — Portal</h1>
-          <p class="text-xs font-medium text-[var(--text-2)]">Manage uploads, approvals, and brand-ready assets.</p>
+      <div class="container mx-auto flex max-w-screen-xl flex-wrap items-center justify-between gap-6 py-4">
+        <div class="space-y-2">
+          <div class="flex flex-wrap items-center gap-3">
+            <p class="eyebrow">On Brand Studio</p>
+            <span v-if="isLoggedIn" class="chip">{{ roleLabel }}</span>
+          </div>
+          <h1 class="brand-title text-2xl font-semibold text-[var(--text)]">Creative Command Center</h1>
+          <div class="accent-bar"></div>
+          <p class="text-xs font-medium text-[var(--text-2)]">
+            Orchestrate uploads, approvals, and brand-ready stories in one playful hub.
+          </p>
         </div>
-        <nav class="flex items-center gap-3 text-sm font-medium text-[var(--text-2)]">
+        <nav class="flex flex-wrap items-center gap-2 text-sm font-medium text-[var(--text-2)]">
           <template v-for="link in navLinks" :key="link.href">
-            <a class="rounded-md px-2 py-1 transition-colors hover:text-primary" :href="link.href">
+            <a class="nav-link" :href="link.href">
               {{ link.label }}
             </a>
           </template>
+          <Button class="ml-1" size="sm" variant="ghost" @click="toggleTheme">
+            {{ themeToggleLabel }}
+          </Button>
           <Button class="ml-1" size="sm" variant="secondary" @click="handleLogout">
             Logout
           </Button>
         </nav>
       </div>
     </header>
-    <main class="container mx-auto max-w-screen-xl space-y-6 py-8">
+    <div v-if="!isLoggedIn" class="container mx-auto flex max-w-screen-xl justify-end pt-6">
+      <Button size="sm" variant="ghost" @click="toggleTheme">
+        {{ themeToggleLabel }}
+      </Button>
+    </div>
+    <main class="container mx-auto max-w-screen-xl space-y-6 py-8 relative z-10">
       <router-view />
     </main>
     <Toaster rich-colors position="top-right" />
@@ -39,6 +54,7 @@ const router = useRouter();
 const route = useRoute();
 const isLoggedIn = ref(false);
 const isAdminUser = ref(false);
+const isDark = ref(false);
 const navLinks = computed(() => {
   if (!isLoggedIn.value) {
     return [];
@@ -61,9 +77,22 @@ const navLinks = computed(() => {
   ];
 });
 
+const roleLabel = computed(() => (isAdminUser.value ? 'Admin view' : 'Client view'));
+const themeToggleLabel = computed(() => (isDark.value ? 'Light mode' : 'Dark mode'));
+
 function checkAuth() {
   isLoggedIn.value = !!localStorage.getItem('token');
   isAdminUser.value = isLoggedIn.value && isAdmin();
+}
+
+function applyTheme(): void {
+  document.documentElement.classList.toggle('dark', isDark.value);
+  localStorage.setItem('theme', isDark.value ? 'dark' : 'light');
+}
+
+function toggleTheme(): void {
+  isDark.value = !isDark.value;
+  applyTheme();
 }
 
 function handleLogout() {
@@ -73,7 +102,16 @@ function handleLogout() {
   router.push('/login');
 }
 
-onMounted(checkAuth);
+onMounted(() => {
+  checkAuth();
+  const storedTheme = localStorage.getItem('theme');
+  if (storedTheme) {
+    isDark.value = storedTheme === 'dark';
+  } else if (window.matchMedia) {
+    isDark.value = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  }
+  applyTheme();
+});
 watch(
   () => route.path,
   () => checkAuth()

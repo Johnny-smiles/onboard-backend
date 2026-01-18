@@ -1,5 +1,15 @@
 <template>
   <div class="space-y-6">
+    <section class="page-header space-y-3">
+      <p class="eyebrow">Admin review</p>
+      <h2 class="text-2xl font-semibold text-[var(--text)]">
+        {{ clientFilter ? `Review: ${clientName}` : 'Review incoming assets' }}
+      </h2>
+      <p class="text-sm text-[var(--text-2)]">
+        Approve, tag, and publish assets with one clean sweep.
+      </p>
+    </section>
+
     <BulkBar
       :count="selected.size"
       @approve="bulkApprove"
@@ -9,42 +19,40 @@
       @tag="bulkTag"
     />
 
-    <div class="card space-y-6">
+    <div class="section-card space-y-6">
       <div class="flex flex-wrap items-center justify-between gap-4">
-        <div>
-          <h2 class="text-xl font-semibold text-slate-900">
-            {{ clientFilter ? `Review: ${clientName}` : 'Admin Review (All Clients)' }}
-          </h2>
-          <p v-if="clientFilter" class="mt-1 text-sm text-slate-600">
+        <div class="space-y-1">
+          <h3 class="section-title">Filters</h3>
+          <p v-if="clientFilter" class="text-sm text-[var(--text-2)]">
             Reviewing photos for this client only
           </p>
         </div>
 
         <div class="flex flex-wrap items-center gap-3 text-sm">
-          <label class="font-medium text-slate-600">Client</label>
+          <label class="font-medium text-[var(--text-2)]">Client</label>
           <select v-model="clientFilter" class="input-control w-36 sm:w-44">
             <option :value="null">All Clients</option>
             <option v-for="client in clients" :key="client.id" :value="client.id">
               {{ client.name }}
             </option>
           </select>
-          <label class="font-medium text-slate-600">Approved</label>
+          <label class="font-medium text-[var(--text-2)]">Approved</label>
           <select v-model="approved" class="input-control w-36 sm:w-44">
             <option :value="null">All</option>
             <option :value="0">Pending</option>
             <option :value="1">Approved</option>
           </select>
-          <Button variant="secondary" @click="load">Refresh</Button>
+          <Button variant="ghost" @click="load">Refresh</Button>
         </div>
       </div>
 
       <div class="grid gap-4 md:grid-cols-2">
         <div v-for="photo in photos" :key="photo.id" class="card space-y-4">
           <div class="flex items-center justify-between gap-3">
-            <label class="flex items-center gap-2 text-sm font-medium text-slate-700">
+            <label class="flex items-center gap-2 text-sm font-medium text-[var(--text-2)]">
               <input
                 :checked="selected.has(photo.id)"
-                class="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                class="rounded border-[var(--border)] text-primary focus:ring-[var(--c-ring)]"
                 type="checkbox"
                 @change="toggle(photo.id)"
               />
@@ -56,17 +64,19 @@
           <img
             :alt="photo.caption || 'Uploaded photo'"
             :src="fileUrl(photo.file_path)"
-            class="w-full rounded-xl border border-slate-200 object-cover"
+            class="w-full rounded-xl border border-[var(--border)] object-cover"
           />
 
           <div class="flex flex-wrap gap-2">
             <span class="badge">#{{ photo.id }}</span>
             <span v-if="!clientFilter" class="badge">{{ photo.client?.name || `Client ${photo.client_id}` }}</span>
             <span class="badge">Score {{ photo.quality_score ?? '-' }}</span>
-            <span class="badge">Approved: {{ photo.approved ? 'Yes' : 'No' }}</span>
+            <span class="badge" :class="photo.approved ? 'badge-success' : 'badge-warning'">
+              {{ photo.approved ? 'Approved' : 'Pending' }}
+            </span>
           </div>
 
-          <p class="text-sm text-slate-600">
+          <p class="text-sm text-[var(--text-2)]">
             {{ photo.caption || 'No caption provided yet.' }}
           </p>
 
@@ -81,19 +91,19 @@
 
           <div class="flex flex-wrap gap-2">
             <Button v-if="!photo.approved" @click="approve(photo)">Approve</Button>
-            <Button variant="secondary" @click="remove(photo)">Delete</Button>
             <Button variant="secondary" @click="openComments(photo)">Comments</Button>
             <Button variant="secondary" @click="openPublish([photo.id])">Publish…</Button>
+            <Button variant="danger" @click="remove(photo)">Delete</Button>
           </div>
         </div>
       </div>
     </div>
 
-    <div v-if="showComments" class="card">
+    <div v-if="showComments" class="section-card">
       <CommentsPanel :photo-id="activePhotoId" />
     </div>
 
-    <div v-if="showPublish" class="card">
+    <div v-if="showPublish" class="section-card">
       <PublishDrawer :photo-ids="Array.from(selected)" @close="showPublish = false" @queued="onQueued" />
     </div>
   </div>

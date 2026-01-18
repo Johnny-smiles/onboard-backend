@@ -1,21 +1,38 @@
 <template>
   <div class="space-y-6">
-    <section class="card space-y-4">
-      <header class="space-y-1">
-        <h2 class="text-xl font-semibold text-[var(--text)]">What we still need from you</h2>
+    <section class="page-header space-y-4">
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <div class="space-y-2">
+          <p class="eyebrow">Capture agenda</p>
+          <h2 class="text-2xl font-semibold text-[var(--text)]">Plan the next shoot</h2>
+          <p class="text-sm text-[var(--text-2)]">
+            See what we still need, then upload with context so the team can move fast.
+          </p>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <span class="badge">Shot recipes</span>
+          <span class="badge">Auto tagging</span>
+          <span class="badge">On schedule</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-card">
+      <header class="space-y-2">
+        <h2 class="section-title">What we still need from you</h2>
         <p class="text-sm text-[var(--text-2)]">
           These recipe steps are outstanding. Capture these shots to keep us on schedule.
         </p>
       </header>
       <div
         v-if="loading"
-        class="rounded-lg border border-[var(--border)] bg-[var(--surface-2)] px-4 py-3 text-sm text-[var(--text-2)]"
+        class="rounded-2xl border border-[var(--border)] bg-[var(--surface-2)] px-4 py-3 text-sm text-[var(--text-2)]"
       >
         Loading capture guidance…
       </div>
       <div
         v-else-if="needs.length === 0"
-        class="rounded-lg border border-success/40 bg-success/5 px-4 py-3 text-sm text-success"
+        class="rounded-2xl border border-success/40 bg-success/5 px-4 py-3 text-sm text-success"
       >
         You're caught up! All recipe steps have at least one matching upload.
       </div>
@@ -23,7 +40,7 @@
         <article
           v-for="item in needs"
           :key="item.recipe_id"
-          class="rounded-lg border border-warning/30 bg-warning/5 px-4 py-3"
+          class="rounded-2xl border border-warning/30 bg-warning/5 px-4 py-3"
         >
           <h3 class="text-sm font-semibold text-warning/90">
             {{ item.recipe_name }}
@@ -52,9 +69,9 @@
     </section>
 
     <div class="grid gap-6 lg:grid-cols-[2fr_1fr]">
-      <section class="card space-y-4">
-        <header class="space-y-1">
-          <h2 class="text-xl font-semibold text-[var(--text)]">Shot recipes</h2>
+      <section class="section-card">
+        <header class="space-y-2">
+          <h2 class="section-title">Shot recipes</h2>
           <p class="text-sm text-[var(--text-2)]">
             Use these recipes for guidance. Select a recipe to preload its steps when uploading.
           </p>
@@ -65,7 +82,7 @@
             v-for="recipe in recipes"
             :key="recipe.id"
             :open="recipe.id === selectedRecipeId"
-            class="rounded-xl border border-[var(--border)] bg-[var(--surface-2)]"
+            class="rounded-2xl border border-[var(--border)] bg-[var(--surface-2)]"
           >
             <summary
               class="flex cursor-pointer items-center justify-between gap-4 px-4 py-3 text-sm font-medium"
@@ -82,7 +99,7 @@
                 <li
                   v-for="step in recipe.steps"
                   :key="step.label"
-                  class="rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2"
+                  class="rounded-2xl border border-[var(--border)] bg-[var(--surface)] px-3 py-2"
                 >
                   <div class="flex items-center justify-between text-sm font-medium text-[var(--text)]">
                     <span>{{ step.label }}</span>
@@ -102,9 +119,12 @@
       </section>
 
       <aside class="space-y-4">
-        <section class="card space-y-4">
-          <header class="space-y-1">
-            <h2 class="text-lg font-semibold text-[var(--text)]">Upload with context</h2>
+        <section class="section-card">
+          <header class="space-y-2">
+            <div class="flex items-center justify-between gap-2">
+              <h2 class="section-title">Upload with context</h2>
+              <span class="chip">Auto tag</span>
+            </div>
             <p class="text-sm text-[var(--text-2)]">
               Pick a recipe step, then upload images. We'll tag them automatically.
             </p>
@@ -205,10 +225,10 @@
             </div>
           </div>
 
-          <p v-if="error" class="rounded border border-danger/40 bg-danger/5 px-3 py-2 text-sm text-danger">
+          <p v-if="error" class="panel border border-danger/40 bg-danger/5 text-sm text-danger">
             {{ error }}
           </p>
-          <p v-if="success" class="rounded border border-success/40 bg-success/5 px-3 py-2 text-sm text-success">
+          <p v-if="success" class="panel border border-success/40 bg-success/5 text-sm text-success">
             Upload complete! We saved your metadata.
           </p>
         </section>

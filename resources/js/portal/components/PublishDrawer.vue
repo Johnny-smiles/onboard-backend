@@ -1,7 +1,10 @@
 <template>
-  <section class="card space-y-4">
-    <header class="space-y-1">
-      <h3 class="text-lg font-semibold text-[var(--text)]">Publish selection</h3>
+  <section class="section-card">
+    <header class="space-y-2">
+      <div class="flex items-center justify-between gap-3">
+        <h3 class="section-title">Publish selection</h3>
+        <span class="chip">Ready to launch</span>
+      </div>
       <p class="text-xs text-[var(--text-2)]">
         Schedule these assets for downstream channels. Integrations are mocked until backend services are ready.
       </p>
@@ -32,7 +35,7 @@
 
     <div class="flex flex-wrap items-center gap-3">
       <Button size="md" @click="queue">Queue</Button>
-      <Button size="md" variant="secondary" @click="$emit('close')">Close</Button>
+      <Button size="md" variant="ghost" @click="$emit('close')">Close</Button>
     </div>
     <p class="text-xs text-[var(--text-2)]">
       Stubs only — publish flows will sync once integrations are wired up.

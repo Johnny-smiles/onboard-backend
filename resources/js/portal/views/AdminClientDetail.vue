@@ -6,23 +6,24 @@
     </div>
 
     <!-- Error State -->
-    <div v-else-if="error" class="rounded-lg border border-danger/40 bg-danger/5 p-6 text-danger">
+    <div v-else-if="error" class="panel border border-danger/40 bg-danger/5 text-danger">
       {{ error }}
     </div>
 
     <!-- Client Details -->
     <div v-else>
       <!-- Header -->
-      <div class="rounded-lg border border-[var(--border)] bg-[var(--surface)] p-6 shadow-sm">
+      <section class="page-header">
         <div class="flex items-start justify-between gap-4">
           <div class="flex items-start gap-4">
             <div
               v-if="client.brand_color"
-              class="h-16 w-16 rounded-xl border-2 border-[var(--border)] flex-shrink-0"
+              class="h-16 w-16 rounded-2xl border-2 border-[var(--border)] flex-shrink-0"
               :style="{ backgroundColor: client.brand_color }"
             ></div>
-            <div v-else class="h-16 w-16 rounded-xl border-2 border-[var(--border)] bg-[var(--surface-2)] flex-shrink-0"></div>
+            <div v-else class="h-16 w-16 rounded-2xl border-2 border-[var(--border)] bg-[var(--surface-2)] flex-shrink-0"></div>
             <div>
+              <p class="eyebrow">Client profile</p>
               <h1 class="text-3xl font-bold text-[var(--text)]">{{ client.name }}</h1>
               <p v-if="client.contact_email" class="mt-2 text-[var(--text-2)]">
                 <span class="font-medium">Email:</span> {{ client.contact_email }}
@@ -36,7 +37,7 @@
             </div>
           </div>
           <div class="flex gap-2">
-            <Button variant="secondary" @click="$router.push('/admin/clients')">
+            <Button variant="ghost" @click="$router.push('/admin/clients')">
               ← Back
             </Button>
           </div>
@@ -44,21 +45,21 @@
 
         <!-- Stats -->
         <div class="mt-6 grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div class="rounded-lg bg-[var(--surface-2)] p-4 text-center">
-            <div class="text-3xl font-bold text-[var(--text)]">{{ client.projects_count || 0 }}</div>
-            <div class="mt-1 text-sm text-[var(--text-2)]">Projects</div>
+          <div class="stat-tile">
+            <div class="stat-value">{{ client.projects_count || 0 }}</div>
+            <div class="stat-label">Projects</div>
           </div>
-          <div class="rounded-lg bg-[var(--surface-2)] p-4 text-center">
-            <div class="text-3xl font-bold text-[var(--text)]">{{ client.photos_count || 0 }}</div>
-            <div class="mt-1 text-sm text-[var(--text-2)]">Photos</div>
+          <div class="stat-tile">
+            <div class="stat-value">{{ client.photos_count || 0 }}</div>
+            <div class="stat-label">Photos</div>
           </div>
-          <div class="rounded-lg bg-[var(--surface-2)] p-4 text-center">
-            <div class="text-3xl font-bold text-[var(--text)]">{{ client.users_count || 0 }}</div>
-            <div class="mt-1 text-sm text-[var(--text-2)]">Users</div>
+          <div class="stat-tile">
+            <div class="stat-value">{{ client.users_count || 0 }}</div>
+            <div class="stat-label">Users</div>
           </div>
-          <div class="rounded-lg bg-[var(--surface-2)] p-4 text-center">
-            <div class="text-3xl font-bold text-[var(--text)]">{{ socialIntegrations.length }}</div>
-            <div class="mt-1 text-sm text-[var(--text-2)]">Integrations</div>
+          <div class="stat-tile">
+            <div class="stat-value">{{ socialIntegrations.length }}</div>
+            <div class="stat-label">Integrations</div>
           </div>
         </div>
 
@@ -74,16 +75,16 @@
             Edit Client
           </Button>
         </div>
-      </div>
+      </section>
 
       <!-- Social Integrations -->
-      <div v-if="socialIntegrations.length > 0" class="rounded-lg border border-[var(--border)] bg-[var(--surface)] p-6">
-        <h2 class="text-xl font-semibold text-[var(--text)] mb-4">Connected Social Accounts</h2>
+      <section v-if="socialIntegrations.length > 0" class="section-card">
+        <h2 class="section-title mb-4">Connected Social Accounts</h2>
         <div class="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
           <div
             v-for="integration in socialIntegrations"
             :key="integration.id"
-            class="rounded-lg border border-[var(--border)] bg-[var(--surface-2)] p-4"
+            class="rounded-2xl border border-[var(--border)] bg-[var(--surface-2)] p-4"
           >
             <div class="flex items-center justify-between mb-2">
               <span class="font-semibold text-[var(--text)] capitalize">{{ integration.provider }}</span>
@@ -99,16 +100,16 @@
             </p>
           </div>
         </div>
-      </div>
+      </section>
 
       <!-- Recent Projects -->
-      <div v-if="client.projects && client.projects.length > 0" class="rounded-lg border border-[var(--border)] bg-[var(--surface)] p-6">
-        <h2 class="text-xl font-semibold text-[var(--text)] mb-4">Recent Projects</h2>
+      <section v-if="client.projects && client.projects.length > 0" class="section-card">
+        <h2 class="section-title mb-4">Recent Projects</h2>
         <div class="space-y-3">
           <div
             v-for="project in client.projects"
             :key="project.id"
-            class="rounded-lg border border-[var(--border)] bg-[var(--surface-2)] p-4"
+            class="rounded-2xl border border-[var(--border)] bg-[var(--surface-2)] p-4"
           >
             <h3 class="font-semibold text-[var(--text)]">{{ project.name }}</h3>
             <div class="mt-2 flex items-center gap-4 text-sm text-[var(--text-2)]">
@@ -117,16 +118,16 @@
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
       <!-- Users -->
-      <div v-if="client.users && client.users.length > 0" class="rounded-lg border border-[var(--border)] bg-[var(--surface)] p-6">
-        <h2 class="text-xl font-semibold text-[var(--text)] mb-4">Users</h2>
+      <section v-if="client.users && client.users.length > 0" class="section-card">
+        <h2 class="section-title mb-4">Users</h2>
         <div class="space-y-3">
           <div
             v-for="user in client.users"
             :key="user.id"
-            class="flex items-center justify-between rounded-lg border border-[var(--border)] bg-[var(--surface-2)] p-4"
+            class="flex items-center justify-between rounded-2xl border border-[var(--border)] bg-[var(--surface-2)] p-4"
           >
             <div>
               <h3 class="font-semibold text-[var(--text)]">{{ user.name }}</h3>
@@ -137,13 +138,13 @@
             </span>
           </div>
         </div>
-      </div>
+      </section>
 
       <!-- Recent Photos -->
-      <div v-if="recentPhotos.length > 0" class="rounded-lg border border-[var(--border)] bg-[var(--surface)] p-6">
+      <section v-if="recentPhotos.length > 0" class="section-card">
         <div class="flex items-center justify-between mb-4">
-          <h2 class="text-xl font-semibold text-[var(--text)]">Recent Photos</h2>
-          <Button variant="secondary" size="sm" @click="$router.push(`/admin/review?client=${client.id}`)">
+          <h2 class="section-title">Recent Photos</h2>
+          <Button variant="ghost" size="sm" @click="$router.push(`/admin/review?client=${client.id}`)">
             View All
           </Button>
         </div>
@@ -151,7 +152,7 @@
           <div
             v-for="photo in recentPhotos"
             :key="photo.id"
-            class="relative aspect-square rounded-lg overflow-hidden border border-[var(--border)]"
+            class="relative aspect-square rounded-2xl overflow-hidden border border-[var(--border)]"
           >
             <img
               :src="fileUrl(photo.file_path)"
@@ -166,7 +167,7 @@
             </div>
           </div>
         </div>
-      </div>
+      </section>
     </div>
 
     <!-- Edit Client Modal -->
@@ -175,7 +176,7 @@
       class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
       @click.self="closeEditModal"
     >
-      <div class="w-full max-w-lg rounded-lg border border-[var(--border)] bg-[var(--surface)] p-6 shadow-xl">
+      <div class="w-full max-w-lg rounded-[1.75rem] border border-[var(--border)] bg-[var(--surface)] p-6 shadow-xl">
         <h2 class="text-xl font-bold text-[var(--text)]">Edit Client</h2>
         <p class="mt-1 text-sm text-[var(--text-2)]">Update client information</p>
 
@@ -186,7 +187,7 @@
               v-model="editForm.name"
               type="text"
               required
-              class="mt-1 w-full rounded-md border border-[var(--border)] bg-[var(--surface-2)] px-3 py-2 text-[var(--text)] focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+              class="input-control mt-1"
               placeholder="Acme Corp"
             />
           </div>
@@ -196,7 +197,7 @@
             <input
               v-model="editForm.contact_email"
               type="email"
-              class="mt-1 w-full rounded-md border border-[var(--border)] bg-[var(--surface-2)] px-3 py-2 text-[var(--text)] focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+              class="input-control mt-1"
               placeholder="contact@acme.com"
             />
           </div>
@@ -206,7 +207,7 @@
             <input
               v-model="editForm.contact_phone"
               type="tel"
-              class="mt-1 w-full rounded-md border border-[var(--border)] bg-[var(--surface-2)] px-3 py-2 text-[var(--text)] focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+              class="input-control mt-1"
               placeholder="555-0000"
             />
           </div>
@@ -217,12 +218,12 @@
               <input
                 v-model="editForm.brand_color"
                 type="color"
-                class="h-10 w-16 rounded-md border border-[var(--border)] bg-[var(--surface-2)]"
+                class="h-10 w-16 rounded-2xl border border-[var(--border)] bg-[var(--surface-2)]"
               />
               <input
                 v-model="editForm.brand_color"
                 type="text"
-                class="flex-1 rounded-md border border-[var(--border)] bg-[var(--surface-2)] px-3 py-2 text-[var(--text)] focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                class="input-control flex-1"
                 placeholder="#3B82F6"
               />
             </div>
@@ -240,7 +241,7 @@
             <textarea
               v-model="editForm.notes"
               rows="3"
-              class="mt-1 w-full rounded-md border border-[var(--border)] bg-[var(--surface-2)] px-3 py-2 text-[var(--text)] focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+              class="input-control mt-1"
               placeholder="Internal notes about this client..."
             ></textarea>
           </div>
@@ -396,4 +397,3 @@ onMounted(() => {
   loadClient();
 });
 </script>
-

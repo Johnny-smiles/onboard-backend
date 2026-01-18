@@ -1,30 +1,33 @@
 <template>
   <div class="space-y-6">
-    <!-- Header -->
-    <div class="flex items-center justify-between">
-      <div>
-        <h1 class="text-2xl font-bold text-[var(--text)]">Client Management</h1>
-        <p class="mt-1 text-sm text-[var(--text-2)]">Onboard and manage your clients</p>
+    <section class="page-header">
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <div class="space-y-2">
+          <p class="eyebrow">Client studio</p>
+          <h1 class="text-2xl font-bold text-[var(--text)]">Client management</h1>
+          <p class="text-sm text-[var(--text-2)]">Onboard and manage your clients</p>
+        </div>
+        <Button @click="showCreateModal = true">
+          <span class="mr-2">+</span> Onboard New Client
+        </Button>
       </div>
-      <Button @click="showCreateModal = true">
-        <span class="mr-2">+</span> Onboard New Client
-      </Button>
-    </div>
+    </section>
 
     <!-- Clients List -->
     <div v-if="loading" class="text-center py-12">
       <p class="text-[var(--text-2)]">Loading clients...</p>
     </div>
 
-    <div v-else-if="clients.length === 0" class="text-center py-12 border border-dashed border-[var(--border)] rounded-lg">
-      <p class="text-[var(--text-2)]">No clients yet. Click "Onboard New Client" to get started.</p>
+    <div v-else-if="clients.length === 0" class="empty-state">
+      <div class="chip">No clients yet</div>
+      <p class="text-[var(--text-2)]">Click "Onboard New Client" to get started.</p>
     </div>
 
     <div v-else class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
       <div
         v-for="client in clients"
         :key="client.id"
-        class="rounded-lg border border-[var(--border)] bg-[var(--surface)] p-6 transition-all hover:shadow-lg cursor-pointer"
+        class="card transition-all hover:shadow-lg cursor-pointer"
         @click="$router.push(`/admin/clients/${client.id}`)"
       >
         <div class="flex items-start justify-between">
@@ -42,17 +45,17 @@
         </div>
 
         <div class="mt-4 grid grid-cols-3 gap-2 text-center">
-          <div class="rounded-md bg-[var(--surface-2)] p-2">
-            <div class="text-xl font-bold text-[var(--text)]">{{ client.projects_count || 0 }}</div>
-            <div class="text-xs text-[var(--text-2)]">Projects</div>
+          <div class="stat-tile">
+            <div class="stat-value text-xl">{{ client.projects_count || 0 }}</div>
+            <div class="stat-label">Projects</div>
           </div>
-          <div class="rounded-md bg-[var(--surface-2)] p-2">
-            <div class="text-xl font-bold text-[var(--text)]">{{ client.photos_count || 0 }}</div>
-            <div class="text-xs text-[var(--text-2)]">Photos</div>
+          <div class="stat-tile">
+            <div class="stat-value text-xl">{{ client.photos_count || 0 }}</div>
+            <div class="stat-label">Photos</div>
           </div>
-          <div class="rounded-md bg-[var(--surface-2)] p-2">
-            <div class="text-xl font-bold text-[var(--text)]">{{ client.users_count || 0 }}</div>
-            <div class="text-xs text-[var(--text-2)]">Users</div>
+          <div class="stat-tile">
+            <div class="stat-value text-xl">{{ client.users_count || 0 }}</div>
+            <div class="stat-label">Users</div>
           </div>
         </div>
 
@@ -86,7 +89,7 @@
       class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
       @click.self="closeModal"
     >
-      <div class="w-full max-w-lg rounded-lg border border-[var(--border)] bg-[var(--surface)] p-6 shadow-xl">
+      <div class="w-full max-w-lg rounded-[1.75rem] border border-[var(--border)] bg-[var(--surface)] p-6 shadow-xl">
         <h2 class="text-xl font-bold text-[var(--text)]">
           {{ showEditModal ? 'Edit Client' : 'Onboard New Client' }}
         </h2>
@@ -101,7 +104,7 @@
               v-model="form.name"
               type="text"
               required
-              class="mt-1 w-full rounded-md border border-[var(--border)] bg-[var(--surface-2)] px-3 py-2 text-[var(--text)] focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+              class="input-control mt-1"
               placeholder="Acme Corp"
             />
           </div>
@@ -111,7 +114,7 @@
             <input
               v-model="form.contact_email"
               type="email"
-              class="mt-1 w-full rounded-md border border-[var(--border)] bg-[var(--surface-2)] px-3 py-2 text-[var(--text)] focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+              class="input-control mt-1"
               placeholder="contact@acme.com"
             />
           </div>
@@ -121,7 +124,7 @@
             <input
               v-model="form.contact_phone"
               type="tel"
-              class="mt-1 w-full rounded-md border border-[var(--border)] bg-[var(--surface-2)] px-3 py-2 text-[var(--text)] focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+              class="input-control mt-1"
               placeholder="555-0000"
             />
           </div>
@@ -132,12 +135,12 @@
               <input
                 v-model="form.brand_color"
                 type="color"
-                class="h-10 w-16 rounded-md border border-[var(--border)] bg-[var(--surface-2)]"
+                class="h-10 w-16 rounded-2xl border border-[var(--border)] bg-[var(--surface-2)]"
               />
               <input
                 v-model="form.brand_color"
                 type="text"
-                class="flex-1 rounded-md border border-[var(--border)] bg-[var(--surface-2)] px-3 py-2 text-[var(--text)] focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                class="input-control flex-1"
                 placeholder="#3B82F6"
               />
             </div>
@@ -155,7 +158,7 @@
             <textarea
               v-model="form.notes"
               rows="3"
-              class="mt-1 w-full rounded-md border border-[var(--border)] bg-[var(--surface-2)] px-3 py-2 text-[var(--text)] focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+              class="input-control mt-1"
               placeholder="Internal notes about this client..."
             ></textarea>
           </div>
@@ -171,7 +174,7 @@
                 v-model="form.user_email"
                 type="email"
                 required
-                class="mt-1 w-full rounded-md border border-[var(--border)] bg-[var(--surface-2)] px-3 py-2 text-[var(--text)] focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                class="input-control mt-1"
                 placeholder="user@acme.com"
               />
             </div>
@@ -182,7 +185,7 @@
                 v-model="form.user_password"
                 type="text"
                 required
-                class="mt-1 w-full rounded-md border border-[var(--border)] bg-[var(--surface-2)] px-3 py-2 text-[var(--text)] focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                class="input-control mt-1"
                 placeholder="password"
               />
             </div>
@@ -349,4 +352,3 @@ onMounted(() => {
   loadClients();
 });
 </script>
-
